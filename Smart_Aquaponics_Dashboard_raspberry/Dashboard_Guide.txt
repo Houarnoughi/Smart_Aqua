@@ -1,0 +1,139 @@
+==============================================
+Smart Aquaponics Mobile Dashboard Guide
+Raspberry Pi + Arduino Uno
+==============================================
+
+Project folder:
+/home/hamad/Smart_Aquaponics_Dashboard
+
+Main server:
+/home/hamad/Smart_Aquaponics_Dashboard/app.py
+
+Arduino Uno code:
+/home/hamad/Arduino_Uno_Full_System/Arduino_Uno_Full_System.ino
+
+==============================================
+WHAT IT DOES
+==============================================
+
+The Arduino Uno reads sensors and controls relays/feeder.
+It sends one JSON line per second to Raspberry Pi over USB serial.
+
+The Raspberry Pi runs a Flask web dashboard.
+Your phone opens the dashboard in a browser.
+
+Dashboard shows:
+- pH
+- EC
+- Air quality
+- Water level
+- Flow YES/NO
+- Box temperature from DHT11
+- Humidity from DHT11
+- Water temperature from DS18B20
+- Light condition from BH1750
+- Fan, lights, solenoid, pump, feeder status
+
+Dashboard controls:
+- Fan auto/on/off
+- Solenoid auto/open/close
+- Pump on/off
+- Light 1/2/3 on/off/schedule
+- Feeder now/auto/off/schedule
+
+==============================================
+RUN DASHBOARD
+==============================================
+
+Arduino Uno must be connected as:
+/dev/ttyACM0
+
+Run:
+
+cd /home/hamad/Smart_Aquaponics_Dashboard
+python3 app.py
+
+Open from Raspberry Pi browser:
+http://localhost:5000
+
+Open from phone on same WiFi:
+http://RASPBERRY_PI_IP:5000
+
+Find Pi IP:
+hostname -I
+
+Example:
+http://192.168.1.50:5000
+
+==============================================
+REMOTE ACCESS LATER
+==============================================
+
+For remote access outside home, use a secure tunnel such as Cloudflare Tunnel or Tailscale.
+Do not expose port 5000 directly to the internet without authentication.
+
+Recommended later:
+- Tailscale for private access from your phone
+- Or Cloudflare Tunnel with access protection
+
+==============================================
+SERIAL COMMANDS USED
+==============================================
+
+Fan:
+FAN:AUTO
+FAN:ON
+FAN:OFF
+
+Solenoid:
+SOL:AUTO
+SOL:ON
+SOL:OFF
+
+Pump:
+PUMP:ON
+PUMP:OFF
+
+Lights:
+L1:ON
+L1:OFF
+L1:AUTO:onSeconds:offSeconds
+
+L2:ON
+L2:OFF
+L2:AUTO:onSeconds:offSeconds
+
+L3:ON
+L3:OFF
+L3:AUTO:onSeconds:offSeconds
+
+Feeder:
+FEED:NOW
+FEED:AUTO
+FEED:OFF
+FEED:SET:intervalSeconds:durationMs
+
+==============================================
+TROUBLESHOOTING
+==============================================
+
+If dashboard says disconnected:
+- Check Arduino is connected
+- Check /dev/ttyACM0 exists
+- Close Arduino Serial Monitor if open
+- Run: sudo fuser -k /dev/ttyACM0
+- Restart dashboard
+
+If controls do not work:
+- Check Arduino is outputting JSON
+- Check relay module has external power if needed
+- Check relay active LOW/HIGH setting in Arduino code
+
+If page does not open from phone:
+- Phone and Pi must be on same WiFi
+- Use Pi IP address, not localhost
+- Check firewall/router isolation settings
+
+==============================================
+END
+==============================================

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Aquaponics Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Arduino Uno + Raspberry Pi</p>
+        <h1>Smart Aquaponics</h1>
+      </div>
+      <div id="connection" class="status-pill">Connecting</div>
+    </header>
+
+    <section class="grid sensors">
+      <article class="card"><span>pH</span><strong id="ph">--</strong></article>
+      <article class="card"><span>EC</span><strong id="ec_us">--</strong><small>uS/cm</small></article>
+      <article class="card"><span>Air</span><strong id="air">--</strong></article>
+      <article class="card"><span>Water Level</span><strong id="water_level">--</strong></article>
+      <article class="card"><span>Flow</span><strong id="flow">--</strong></article>
+      <article class="card"><span>Box Temp</span><strong id="box_temp_c">--</strong><small>C</small></article>
+      <article class="card"><span>Humidity</span><strong id="humidity">--</strong><small>%</small></article>
+      <article class="card"><span>Water Temp</span><strong id="water_temp_c">--</strong><small>C</small></article>
+      <article class="card"><span>Light</span><strong id="light">--</strong><small id="lux">-- lux</small></article>
+    </section>
+
+    <section class="panel">
+      <h2>Controls</h2>
+      <div class="control-grid">
+        <div class="control"><b>Fan</b><small id="fan">--</small><button onclick="cmd('fan_auto')">Auto</button><button onclick="cmd('fan_on')">On</button><button onclick="cmd('fan_off')">Off</button></div>
+        <div class="control"><b>Solenoid</b><small id="solenoid">--</small><button onclick="cmd('solenoid_auto')">Auto</button><button onclick="cmd('solenoid_on')">Open</button><button onclick="cmd('solenoid_off')">Close</button></div>
+        <div class="control"><b>Pump</b><small id="pump">--</small><button onclick="cmd('pump_on')">On</button><button onclick="cmd('pump_off')">Off</button></div>
+        <div class="control"><b>Feeder</b><small id="feeder">--</small><button onclick="cmd('feed_now')">Feed Now</button><button onclick="cmd('feed_auto')">Auto</button><button onclick="cmd('feed_off')">Off</button></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Lights</h2>
+      <div class="control-grid">
+        <div class="control"><b>Light 1</b><small id="light1">--</small><button onclick="cmd('light1_on')">On</button><button onclick="cmd('light1_off')">Off</button><button onclick="scheduleLight(1)">Schedule</button></div>
+        <div class="control"><b>Light 2</b><small id="light2">--</small><button onclick="cmd('light2_on')">On</button><button onclick="cmd('light2_off')">Off</button><button onclick="scheduleLight(2)">Schedule</button></div>
+        <div class="control"><b>Light 3</b><small id="light3">--</small><button onclick="cmd('light3_on')">On</button><button onclick="cmd('light3_off')">Off</button><button onclick="scheduleLight(3)">Schedule</button></div>
+      </div>
+      <div class="form-row">
+        <label>On hours <input id="lightOnHours" type="number" min="1" value="6"></label>
+        <label>Off hours <input id="lightOffHours" type="number" min="1" value="12"></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Feeder Schedule</h2>
+      <div class="form-row">
+        <label>Every hours <input id="feedIntervalHours" type="number" min="1" value="12"></label>
+        <label>Run ms <input id="feedDurationMs" type="number" min="100" value="2480"></label>
+        <button onclick="scheduleFeed()">Save Feed Schedule</button>
+      </div>
+    </section>
+
+    <footer>
+      <span>Last update: <b id="updated_at">--</b></span>
+      <span id="error"></span>
+    </footer>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
