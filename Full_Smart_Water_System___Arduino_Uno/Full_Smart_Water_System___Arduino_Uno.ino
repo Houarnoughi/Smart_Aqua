@@ -25,6 +25,29 @@
   Relay logic assumes active LOW relay module:
     LOW  = relay ON
     HIGH = relay OFF
+
+  Added sensor alert ranges:
+
+pH: 6.5 - 7.5
+EC: 500 - 2000 uS/cm
+Box temperature: 18 - 32 °C
+Humidity: 50 - 85%
+Water temperature: 20 - 30 °C
+Grow light: 1000 - 70000 lux
+
+Added critical state alerts:
+
+Air quality becomes BAD
+Water level becomes LOW
+Dashboard disconnects from Arduino
+Flow becomes NO only when pump is ON
+
+Behavior:
+
+Sends notification when a sensor goes outside range.
+Sends notification when it comes back to normal.
+Does not repeat the same alert every refresh.
+Existing state-change notifications still work.
 */
 
 #include <Wire.h>
@@ -56,13 +79,28 @@ const byte RELAY_OFF = HIGH;
 // ---------- DHT11 ----------
 const byte DHT_TYPE = DHT11;
 DHT dht(DHT_PIN, DHT_TYPE);
-const float DHT_TEMP_OFFSET_C = -2.15; // From previous DHT11 calibration
+const float DHT_TEMP_OFFSET_C = 0.0; // DHT11 box temperature offset
 const float FAN_ON_TEMP_C = 32.0;
 const float FAN_OFF_TEMP_C = 29.0;
 
 // ---------- DS18B20 water temperature ----------
 OneWire oneWire(DS18B20_PIN);
 DallasTemperature waterTempSensor(&oneWire);
+
+float readWaterTemperatureC() {
+  waterTempSensor.requestTemperatures();
+  float value = waterTempSensor.getTempCByIndex(0);
+
+  if (value == DEVICE_DISCONNECTED_C) {
+    // Re-scan the OneWire bus in case the probe was connected after boot.
+    waterTempSensor.begin();
+    delay(20);
+    waterTempSensor.requestTemperatures();
+    value = waterTempSensor.getTempCByIndex(0);
+  }
+
+  return value == DEVICE_DISCONNECTED_C ? NAN : value;
+}
 
 // ---------- 360 servo fish feeder ----------
 Servo feederServo;
@@ -339,6 +377,7 @@ void setup() {
   Wire.begin();
   dht.begin();
   waterTempSensor.begin();
+  waterTempSensor.setResolution(10);
   feederServo.attach(FEEDER_SERVO_PIN);
   stopFeeder();
 
@@ -387,10 +426,9 @@ void loop() {
   int mqRaw = analogRead(MQ135_PIN);
   float tempRaw = dht.readTemperature();
   float humidity = dht.readHumidity();
+  if (!isnan(tempRaw) && tempRaw < 0) tempRaw = -tempRaw;
   float boxTempC = isnan(tempRaw) ? NAN : tempRaw + DHT_TEMP_OFFSET_C;
-  waterTempSensor.requestTemperatures();
-  float waterTempC = waterTempSensor.getTempCByIndex(0);
-  if (waterTempC == DEVICE_DISCONNECTED_C) waterTempC = NAN;
+  float waterTempC = readWaterTemperatureC();
   float lux = readLux();
 
   updateFan(boxTempC);
