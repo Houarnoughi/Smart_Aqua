@@ -4,13 +4,14 @@
 from __future__ import annotations
 
 import json
+import os
 import threading
 import time
 from datetime import datetime
 from pathlib import Path
 
 import serial
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -18,6 +19,8 @@ SERIAL_PORT = "/dev/ttyACM0"
 BAUD_RATE = 115200
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("DASHBOARD_SECRET", "change-this-dashboard-secret")
+DASHBOARD_PASSWORD = os.environ.get("DASHBOARD_PASSWORD", "Hydro@2026")
 
 state_lock = threading.Lock()
 latest_data: dict = {
@@ -47,6 +50,18 @@ COMMANDS = {
     "feed_auto": "FEED:AUTO",
     "feed_off": "FEED:OFF",
 }
+
+
+@app.before_request
+def require_login():
+    allowed = {"login", "static"}
+    if request.endpoint in allowed:
+        return None
+    if session.get("authenticated"):
+        return None
+    if request.path.startswith("/api/"):
+        return jsonify({"ok": False, "error": "not authenticated"}), 401
+    return redirect(url_for("login"))
 
 
 def update_state(**values: object) -> None:
@@ -99,6 +114,24 @@ def send_command(command: str) -> bool:
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        password = request.form.get("password", "")
+        if password == DASHBOARD_PASSWORD:
+            session["authenticated"] = True
+            return redirect(url_for("index"))
+        error = "Wrong password"
+    return render_template("login.html", error=error)
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 
 @app.route("/api/data")

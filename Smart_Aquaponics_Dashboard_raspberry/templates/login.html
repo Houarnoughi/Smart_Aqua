@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Hydro Aquaponic Login</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="login-wrap">
+    <form class="login-card" method="post">
+      <p class="eyebrow">Secure Access</p>
+      <h1>Smart Hydro Aquaponic</h1>
+      <label>Password
+        <input name="password" type="password" autocomplete="current-password" autofocus required>
+      </label>
+      {% if error %}<p class="login-error">{{ error }}</p>{% endif %}
+      <button type="submit">Open Dashboard</button>
+    </form>
+  </main>
+</body>
+</html>

@@ -32,6 +32,10 @@ h2 { margin: 0 0 14px; font-size: 1.35rem; }
 .card strong { font-size: 1.9rem; overflow-wrap: anywhere; }
 .card small { color: var(--accent); font-weight: 700; }
 .panel { margin-top: 14px; border-radius: 24px; padding: 16px; background: rgba(16,32,31,.92); }
+.notify-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.notify-panel h2 { width: 100%; margin-bottom: 2px; }
+.hint { margin: 0; color: var(--muted); flex: 1 1 240px; }
+#notifyStatus { color: var(--accent); font-weight: 800; }
 .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
 .control { border-radius: 18px; padding: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
 .control b { font-size: 1.1rem; }
@@ -43,6 +47,12 @@ label { display: grid; gap: 6px; color: var(--muted); font-weight: 700; }
 input { width: 130px; border: 1px solid rgba(255,255,255,.12); background: #081715; color: var(--text); border-radius: 12px; padding: 12px; font-size: 1.1rem; }
 footer { display: flex; justify-content: space-between; gap: 12px; padding: 16px 4px 30px; }
 #error { color: var(--danger); }
+.logout-form { display: flex; justify-content: flex-end; margin: -6px 0 10px; }
+.logout-form button { background: #263633; color: var(--text); padding: 10px 14px; }
+.login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 18px; }
+.login-card { width: min(460px, 100%); display: grid; gap: 18px; padding: 24px; border-radius: 28px; background: rgba(16,32,31,.94); border: 1px solid rgba(255,255,255,.10); box-shadow: 0 20px 55px rgba(0,0,0,.35); }
+.login-card input { width: 100%; }
+.login-error { margin: 0; color: var(--danger); font-weight: 900; }
 
 @media (max-width: 560px) {
   body { font-size: 17px; }

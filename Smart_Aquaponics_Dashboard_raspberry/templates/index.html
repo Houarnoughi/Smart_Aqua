@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Smart Aquaponics Dashboard</title>
+  <title>Smart Hydro Aquaponic Dashboard</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -11,10 +11,21 @@
     <header class="hero">
       <div>
         <p class="eyebrow">Arduino Uno + Raspberry Pi</p>
-        <h1>Smart Aquaponics</h1>
+        <h1>Smart Hydro Aquaponic</h1>
       </div>
       <div id="connection" class="status-pill">Connecting</div>
     </header>
+
+    <form class="logout-form" method="post" action="/logout">
+      <button type="submit">Logout</button>
+    </form>
+
+    <section class="panel notify-panel">
+      <h2>Notifications</h2>
+      <p class="hint">Get alerts when sensor readings move outside safe aquaponic ranges or important relay states change.</p>
+      <button onclick="enableNotifications()">Enable Notifications</button>
+      <span id="notifyStatus">Not enabled</span>
+    </section>
 
     <section class="grid sensors">
       <article class="card"><span>pH</span><strong id="ph">--</strong></article>
